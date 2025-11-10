@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+void bubble_sort(int arr[], int n) {
+    for(int i=0;i<n-1;i++)
+        for(int j=0;j<n-i-1;j++)
+            if(arr[j]>arr[j+1]){
+                int temp=arr[j];
+                arr[j]=arr[j+1];
+                arr[j+1]=temp;
+            }
+}
+
+int main(int argc,char *argv[]){
+    // Child process: display descending and reverse input array
+    if(argc > 1){
+        int n=(argc-1)/2; // first half: sorted, second half: original
+        printf("\n--- Child Process ---\n");
+        printf("Child PID: %d, Parent PID: %d\n", getpid(), getppid());
+
+        printf("Array in descending order (sorted): ");
+        for(int i=n;i>=1;i--) printf("%s ", argv[i]);
+        printf("\n");
+
+        printf("Original array in reverse order: ");
+        for(int i=argc-1;i>n;i--) printf("%s ", argv[i]);
+        printf("\n");
+        return 0;
+    }
+
+    // Parent process: input and sort
+    printf("\n--- Parent Process ---\n");
+    printf("Parent PID: %d\n", getpid());
+
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d",&n);
+
+    int arr[n], orig[n];
+    char arg_str[40][12]; // store sorted + original numbers as strings
+    char *args[2*n+2];
+
+    printf("Enter %d elements: ",n);
+    for(int i=0;i<n;i++){
+        scanf("%d",&arr[i]);
+        orig[i]=arr[i]; // store original input
+    }
+
+    bubble_sort(arr,n); // sort ascending
+
+    printf("Parent sorted array (ascending): ");
+    for(int i=0;i<n;i++) printf("%d ",arr[i]);
+    printf("\n");
+
+    // Prepare args for child: first sorted, then original
+    args[0]=argv[0]; // program name
+    for(int i=0;i<n;i++){
+        sprintf(arg_str[i],"%d",arr[i]);
+        args[i+1]=arg_str[i];
+    }
+    for(int i=0;i<n;i++){
+        sprintf(arg_str[n+i],"%d",orig[i]);
+        args[n+i+1]=arg_str[n+i];
+    }
+    args[2*n+1]=NULL;
+
+    printf("\nCreating child process...\n");
+    pid_t pid=fork();
+
+    if(pid<0){
+        perror("Fork failed");
+        exit(1);
+    }else if(pid==0){
+        execve(argv[0],args,NULL);
+        perror("execve failed");
+        exit(1);
+    }else{
+        wait(NULL);
+        printf("\n--- Parent Process Finished ---\n");
+    }
+    return 0;
+}
+
+
+OUTPUT:
+
+base) rmdstic@apple-mac-book:~$ cd Desktop
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os2bf.c
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os2bf.c -o os2bf
+(base) rmdstic@apple-mac-book:~/Desktop$ ./a.out
+
+--- Parent Process ---
+Parent PID: 10156
+Enter number of elements: 5
+Enter 5 elements: 8 2 9 4 1
+Parent sorted array (ascending): 1 2 4 8 9 
+
+Creating child process...
+
+--- Child Process ---
+Child PID: 10159, Parent PID: 10156
+Array in descending order (sorted): 9 8 4 2 1 
+Original array in reverse order: 1 4 9 2 8 
+
+--- Parent Process Finished ---

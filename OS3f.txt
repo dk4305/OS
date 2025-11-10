@@ -1,0 +1,254 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 50
+
+// ---------- Function for SJF (Preemptive / SRTF) ----------
+void sjf_preemptive()
+{
+    int n, bt[MAX], at[MAX], rt[MAX];
+    int completed = 0, t = 0, min_index;
+    float avgwt = 0, avgtt = 0;
+
+    printf("\nEnter number of processes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("Enter Arrival Time and Burst Time of P%d: ", i + 1);
+        scanf("%d%d", &at[i], &bt[i]);
+        rt[i] = bt[i];
+    }
+
+    int complete = 0, shortest = 0, finish_time;
+    int minm = 9999;
+    int check = 0;
+    int wt[n], tat[n];
+
+    for (t = 0; complete != n; t++)
+    {
+        shortest = -1;
+        minm = 9999;
+
+        // find process with minimum remaining time at time t
+        for (int j = 0; j < n; j++)
+        {
+            if ((at[j] <= t) && (rt[j] < minm) && rt[j] > 0)
+            {
+                minm = rt[j];
+                shortest = j;
+            }
+        }
+
+        if (shortest == -1)
+            continue;
+
+        rt[shortest]--;
+
+        if (rt[shortest] == 0)
+        {
+            complete++;
+            finish_time = t + 1;
+            wt[shortest] = finish_time - bt[shortest] - at[shortest];
+
+            if (wt[shortest] < 0)
+                wt[shortest] = 0;
+        }
+    }
+
+    printf("\nProcess\tAT\tBT\tWT\tTAT");
+    for (int i = 0; i < n; i++)
+    {
+        tat[i] = bt[i] + wt[i];
+        avgwt += wt[i];
+        avgtt += tat[i];
+        printf("\nP%d\t%d\t%d\t%d\t%d", i + 1, at[i], bt[i], wt[i], tat[i]);
+    }
+
+    printf("\n\nAverage Waiting Time: %.2f", avgwt / n);
+    printf("\nAverage Turnaround Time: %.2f\n", avgtt / n);
+}
+
+// ---------- Function for Round Robin ----------
+void round_robin()
+{
+    int n, quantum;
+    int bt[MAX], at[MAX], rt[MAX];
+    int wt[MAX], tat[MAX];
+    int t = 0, complete = 0;
+    float avgwt = 0, avgtt = 0;
+
+    printf("\nEnter number of processes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("Enter Arrival Time and Burst Time of P%d: ", i + 1);
+        scanf("%d%d", &at[i], &bt[i]);
+        rt[i] = bt[i];
+    }
+
+    printf("Enter Time Quantum: ");
+    scanf("%d", &quantum);
+
+    int queue[MAX], front = 0, rear = 0, i;
+    int visited[MAX] = {0};
+    int time = 0;
+
+    // find first process to enter the queue
+    while (1)
+    {
+        int done = 1;
+        for (i = 0; i < n; i++)
+        {
+            if (at[i] <= time && visited[i] == 0)
+            {
+                queue[rear++] = i;
+                visited[i] = 1;
+            }
+        }
+
+        if (front == rear)
+            break;
+
+        int idx = queue[front++];
+        done = 0;
+
+        if (rt[idx] > quantum)
+        {
+            time += quantum;
+            rt[idx] -= quantum;
+        }
+        else
+        {
+            time += rt[idx];
+            wt[idx] = time - bt[idx] - at[idx];
+            tat[idx] = time - at[idx];
+            rt[idx] = 0;
+            complete++;
+        }
+
+        // enqueue newly arrived processes
+        for (i = 0; i < n; i++)
+        {
+            if (at[i] <= time && visited[i] == 0)
+            {
+                queue[rear++] = i;
+                visited[i] = 1;
+            }
+        }
+
+        // if current process still has burst left, put it again in queue
+        if (rt[idx] > 0)
+            queue[rear++] = idx;
+
+        if (complete == n)
+            break;
+    }
+
+    printf("\nProcess\tAT\tBT\tWT\tTAT");
+    for (i = 0; i < n; i++)
+    {
+        avgwt += wt[i];
+        avgtt += tat[i];
+        printf("\nP%d\t%d\t%d\t%d\t%d", i + 1, at[i], bt[i], wt[i], tat[i]);
+    }
+
+    printf("\n\nAverage Waiting Time: %.2f", avgwt / n);
+    printf("\nAverage Turnaround Time: %.2f\n", avgtt / n);
+}
+
+// ---------- MAIN MENU ----------
+int main()
+{
+    int ch;
+
+    while (1)
+    {
+        printf("\n\nCPU SCHEDULING ALGORITHMS");
+        printf("\n1. Shortest Job First (Preemptive)");
+        printf("\n2. Round Robin (with Arrival Time)");
+        printf("\n3. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &ch);
+
+        switch (ch)
+        {
+        case 1:
+            sjf_preemptive();
+            break;
+        case 2:
+            round_robin();
+            break;
+        case 3:
+            exit(0);
+        default:
+            printf("\nInvalid choice! Try again.\n");
+        }
+    }
+    return 0;
+}
+
+
+
+OUTPUT:
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os3f.c
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os3f.c -o os3f
+(base) rmdstic@apple-mac-book:~/Desktop$ ./a.out
+
+
+CPU SCHEDULING ALGORITHMS
+1. Shortest Job First (Preemptive)
+2. Round Robin (with Arrival Time)
+3. Exit
+Enter your choice: 1
+
+Enter number of processes: 5
+Enter Arrival Time and Burst Time of P1: 0 7
+Enter Arrival Time and Burst Time of P2: 2 4
+Enter Arrival Time and Burst Time of P3: 4 1
+Enter Arrival Time and Burst Time of P4: 5 4
+Enter Arrival Time and Burst Time of P5: 6 2
+
+Process	AT	BT	WT	TAT
+P1	0	7	11	18
+P2	2	4	1	5
+P3	4	1	0	1
+P4	5	4	4	8
+P5	6	2	1	3
+
+Average Waiting Time: 3.40
+Average Turnaround Time: 7.00
+
+
+CPU SCHEDULING ALGORITHMS
+1. Shortest Job First (Preemptive)
+2. Round Robin (with Arrival Time)
+3. Exit
+Enter your choice: 2
+
+Enter number of processes: 5
+Enter Arrival Time and Burst Time of P1: 0 7
+Enter Arrival Time and Burst Time of P2: 2 4
+Enter Arrival Time and Burst Time of P3: 4 1
+Enter Arrival Time and Burst Time of P4: 5 4
+Enter Arrival Time and Burst Time of P5: 6 2
+Enter Time Quantum: 2
+
+Process	AT	BT	WT	TAT
+P1	0	7	11	18
+P2	2	4	3	7
+P3	4	1	2	3
+P4	5	4	8	12
+P5	6	2	5	7
+
+Average Waiting Time: 5.80
+Average Turnaround Time: 9.40
+
+
+CPU SCHEDULING ALGORITHMS
+1. Shortest Job First (Preemptive)
+2. Round Robin (with Arrival Time)
+3. Exit
+Enter your choice: 3
+(base) rmdstic@apple-mac-book:~/Desktop$ 

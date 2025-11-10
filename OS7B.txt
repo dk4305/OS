@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+
+int main() {
+    char *myfifo1 = "myfifo1";
+    char *myfifo2 = "myfifo2";
+    char arr[100];
+    int i, words = 0, lines = 1;
+
+    // Create FIFOs
+    mkfifo(myfifo1, 0666);
+    mkfifo(myfifo2, 0666);
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // Child Process → acts as RECEIVER
+        int fd = open(myfifo1, O_RDONLY);
+        read(fd, arr, sizeof(arr));
+        close(fd);
+
+        i = strlen(arr);
+        for (int j = 0; arr[j] != '\0'; j++) {
+            if (arr[j] == ' ' || arr[j] == '\n')
+                words++;
+            if (arr[j] == '\n')
+                lines++;
+        }
+
+        int fd1 = open(myfifo2, O_WRONLY);
+        write(fd1, &i, sizeof(i));
+        write(fd1, &words, sizeof(words));
+        write(fd1, &lines, sizeof(lines));
+        close(fd1);
+    } 
+    else {
+        // Parent Process → acts as SENDER
+        printf("Enter a line: ");
+        fgets(arr, sizeof(arr), stdin);
+
+        int fd = open(myfifo1, O_WRONLY);
+        write(fd, arr, strlen(arr) + 1);
+        close(fd);
+
+        int fd1 = open(myfifo2, O_RDONLY);
+        read(fd1, &i, sizeof(i));
+        read(fd1, &words, sizeof(words));
+        read(fd1, &lines, sizeof(lines));
+        close(fd1);
+
+        printf("\nTotal characters: %d\n", i);
+        printf("Total words: %d\n", words);
+        printf("Total lines: %d\n", lines);
+
+        // Cleanup
+        unlink(myfifo1);
+        unlink(myfifo2);
+    }
+
+    return 0;
+}
+
+OUTPUT:
+
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os7B.c
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os7B.c -o os7B
+(base) rmdstic@apple-mac-book:~/Desktop$ ./a.out
+Enter a line: HELLO I AM AT RMDSTIC
+
+Total characters: 22
+Total words: 5
+Total lines: 2

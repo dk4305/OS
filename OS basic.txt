@@ -1,0 +1,105 @@
+OS basic
+
+
+(base) rmdstic@apple-mac-book:~/Desktop$ echo "students"
+students
+(base) rmdstic@apple-mac-book:~/Desktop$ echo -e "RMD \bSinhagad \bCollege 
+> "
+RMDSinhagadCollege 
+
+(base) rmdstic@apple-mac-book:~/Desktop$ echo -e "Operating \csystem"
+Operating 
+ 
+(base) rmdstic@apple-mac-book:~/Desktop$ echo -e "Final \nSubmission"
+Final 
+Submission
+
+(base) rmdstic@apple-mac-book:~/Desktop$ echo -e "Operating \tSystem \tLab"
+Operating 	System 	Lab
+
+(base) rmdstic@apple-mac-book:~/Desktop$ ls -l
+total 90792
+-rw-rw-r-- 1 rmdstic rmdstic       82 Oct  3 12:00 abc.txt
+-rw-rw-r-- 1 rmdstic rmdstic    12903 Sep 24 15:24 Admission_Predict.csv
+-rw-r--r-- 1 rmdstic rmdstic 62539591 May  9 02:21 airquality_data.csv
+-rw-r--r-- 1 rmdstic rmdstic 30280127 Mar  3  2025 airquality_data.xlsx
+drwxrwxr-x 2 rmdstic rmdstic     4096 May  9 10:13 Dataset
+-rw-rw-r-- 1 rmdstic rmdstic        0 Oct  3 11:44 fire.txt
+-rw-rw-r-- 1 rmdstic rmdstic        0 Oct  3 11:24 Fire.txt
+-rw-rw-r-- 1 rmdstic rmdstic        0 Oct  3 11:48 Law
+-rw-rw-r-- 1 rmdstic rmdstic        0 Oct  3 11:48 of
+-rw-rw-r-- 1 rmdstic rmdstic    12790 Oct  3 12:15 os_p1.sh.odt
+-rwxrwxr-x 1 rmdstic rmdstic     4184 Oct  3 12:02 os_par1.sh
+-rw-rw-r-- 1 rmdstic rmdstic        0 Oct  3 11:48 power.txt
+-rw-rw-r-- 1 rmdstic rmdstic     3175 Sep 11 10:45 priority.cpp
+-rw-rw-r-- 1 rmdstic rmdstic    93262 May  9 11:24 Untitled.ipynb
+
+
+(base) rmdstic@apple-mac-book:~/Desktop$ read name
+RMDSTIC
+(base) rmdstic@apple-mac-book:~/Desktop$ echo "Hello $name"
+Hello RMDSTIC
+
+(base) rmdstic@apple-mac-book:~/Desktop$ cat ./abc.txt
+abc abc@gmail.com 1234567890 16 jhgfksdhf
+weee weee@gmail.com 1234567890 10 safjs
+
+(base) rmdstic@apple-mac-book:~/Desktop$ cat ./abc.txt > ../temp.txt
+
+(base) rmdstic@apple-mac-book:~/Desktop$ touch tempfile.txt
+
+(base) rmdstic@apple-mac-book:~/Desktop$ read name
+Ram
+(base) rmdstic@apple-mac-book:~/Desktop$ test $name = Ram
+(base) rmdstic@apple-mac-book:~/Desktop$ echo $?
+0
+(base) rmdstic@apple-mac-book:~/Desktop$ read name
+Sham
+(base) rmdstic@apple-mac-book:~/Desktop$ test $name = Ram
+(base) rmdstic@apple-mac-book:~/Desktop$ echo $?
+1
+
+(base) rmdstic@apple-mac-book:~/Desktop$ for i in 1 2 3 4 5
+> do
+>     echo "Value of i $i"
+> done
+Value of i 1
+Value of i 2
+Value of i 3
+Value of i 4
+Value of i 5
+
+(base) rmdstic@apple-mac-book:~/Desktop$ num=0
+(base) rmdstic@apple-mac-book:~/Desktop$ while [ "$num" -lt 5 ]
+> do
+>     echo "Value of num $num"
+>     num=`expr $num + 1`
+> done
+Value of num 0
+Value of num 1
+Value of num 2
+Value of num 3
+Value of num 4
+
+(base) rmdstic@apple-mac-book:~/Desktop$ read num
+5
+(base) rmdstic@apple-mac-book:~/Desktop$ if [ `expr $num % 2` -eq 0 ]
+> then
+>     echo "$num is even"
+> else 
+>     echo "$num is odd"
+> fi
+5 is odd
+
+(base) rmdstic@apple-mac-book:~/Desktop$ grep -i 'weee' ./abc.txt
+weee weee@gmail.com 1234567890 10 safjs
+
+(base) rmdstic@apple-mac-book:~/Desktop$ grep -c 'weee' ./abc.txt
+1
+
+(base) rmdstic@apple-mac-book:~/Desktop$ grep -n 'weee' ./abc.txt
+2:weee weee@gmail.com 1234567890 10 safjs
+
+(base) rmdstic@apple-mac-book:~/Desktop$ sed 's/weee/Ram/' ./abc.txt
+abc abc@gmail.com 1234567890 16 jhgfksdhf
+Ram weee@gmail.com 1234567890 10 safjs

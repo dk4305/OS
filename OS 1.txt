@@ -1,0 +1,253 @@
+OS 1 
+
+
+echo -e "Address Book\n"
+echo -e "File name:"
+read fname
+touch $fname
+echo -e "id \t name \t mobile_no \t salary \t location \t" >> $fname
+ch=0
+while [ $ch -lt 7 ]
+do
+
+echo -e "1) Create Address Book\n"
+echo -e "2) View Address Book\n"
+echo -e "3) Insert a Record\n"
+echo -e "4) Delete a Record\n"
+echo -e "5) Modify a Record\n"
+echo -e "6) Search a Record\n"
+echo -e "7) Exit"
+echo "Enter Your Choice:"
+read ch
+case $ch in 
+	1)
+	echo "Enter number of records:"
+	read n
+	for((i=0;i<$n;i++))
+	do
+	echo "Enter id:"
+	read id
+	echo "Enter name:"
+	read name
+	echo "Enter mobile number:"
+	read mno
+	echo "Enter salary:"
+	read sal
+	echo "Enter location:"
+	read loc
+	echo -e "$id \t $name \t $mno \t $sal \t $loc" >> $fname
+	done
+;;
+	2)
+	cat  $fname
+;;
+	3) 
+	echo "Enter id:"
+	read id
+	echo "Enter name:"
+	read name
+	
+	echo "Enter mobile number:"
+	read mno
+
+	echo "Enter salary:"
+	read sal
+	
+	echo "Enter location:"
+	read loc
+	echo -e "$id \t $name \t $mno \t $sal \t $loc " >> $fname
+;;
+	4)
+	
+	echo "Enter Employee ID to delete:"
+	read id
+
+	if grep -w $id $fname
+	then
+		grep -wv $id $fname >>temp
+		rm $fname
+		mv temp $fname	
+	else
+		echo "record not found"
+	fi
+;;
+	5)
+	echo "Enter Employee ID to modify:"
+	read id
+
+	if grep -w $id $fname
+	then
+		grep -wv $id $fname >>temp
+		rm $fname
+		mv temp $fname	
+
+		echo "Enter e_id:"
+		read id
+		echo "Enter name:"
+		read name
+	
+		echo "Enter mobile number:"
+		read mno
+
+		echo "Enter salary:"
+		read sal
+	
+		echo "Enter location:"
+		read loc
+	
+		echo -e "$id \t $name \t $mno \t $sal \t $loc " >> $fname	
+		else
+			echo "record not found"
+		fi
+;;
+	
+	6)
+		echo "Enter Employee id to search:"
+		read id
+		if grep -w $id $fname
+		then
+			echo "Record found"
+		else
+			echo "record not found"
+		fi
+;;
+
+	*)
+esac
+done
+Output
+Address Book
+
+File name:
+Employee_record
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+
+Enter Your Choice:
+1
+Enter number of records:
+3
+Enter id:
+100
+Enter name:
+Rakesh Sharma
+Enter mobile number:
+7894561230
+Enter salary:
+30000
+Enter location:
+Pune
+Enter id:
+101
+Enter name:
+Sonia Mehta
+Enter mobile number:
+6543210789
+Enter salary:
+45000
+Enter location:
+Pune
+Enter id:
+102
+Enter name:
+Raj Gaikwad
+Enter mobile number:
+7530214698
+Enter salary:
+40000
+Enter location:
+Pune
+
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+2
+id 	 name 	 	        mobile_no 	 salary 	 	location 	
+100 	 Rakesh Sharma     7894561230         30000 	             Pune
+101	 Sonia Mehta 	       6543210789         45000               Pune
+102       Raj Gaikwad         7530214698         40000               Pune
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+4
+Enter Employee ID to delete:
+101
+101 	 Sonia Mehta 	   6543210789 	   45000 	 Pune
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+3
+Enter id:
+101
+Enter name:
+Rohan Mehra
+Enter mobile number:
+8520147963
+Enter salary:
+65000
+Enter location:
+Pune
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+5
+Enter Employee ID to modify:
+102
+102 	 Raj Gaikwad 	 7530214698 	 40000      Pune
+Enter id:
+102
+Enter name:
+Raj Gaikwad
+Enter mobile number:
+7530214698 
+Enter salary:
+45000
+Enter location:
+Pune
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+6
+Enter Employee id to search:
+100
+100 	 Rakesh Sharma	 7894561230 	 30000 	 Pune 
+Record found
+1) Create Address Book
+2) View Address Book
+3) Insert a Record
+4) Delete a Record
+5) Modify a Record
+6) Search a Record
+7) Exit
+Enter Your Choice:
+7

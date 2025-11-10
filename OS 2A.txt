@@ -1,0 +1,121 @@
+OS 2A
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define MAX 20
+
+void bubble_asc(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void bubble_dsc(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] < arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void print(int arr[], int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        printf("%d\t", arr[i]);
+    }
+    printf("\n\n");
+}
+
+int main() {
+    int i, n, arr[MAX], f, pid;
+
+    printf("\nHOW MANY NUMBERS DO YOU WANT IN ARRAY: ");
+    scanf("%d", &n);
+
+    printf("ENTER ARRAY ELEMENTS: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    pid = fork();  // create child process
+
+    if (pid < 0) {
+        printf("\nERROR IN FORK!!");
+        exit(1);
+    }
+
+    if (pid == 0) { 
+        // CHILD PROCESS → ORPHAN
+        printf("\n\t********** ORPHAN STATE **********\n");
+        printf("\tChild PID: %d\n", getpid());
+        printf("\tParent PID (before sleep): %d\n", getppid());
+
+        sleep(5); // parent may finish, child becomes orphan
+        printf("\tParent PID (after sleep): %d\n", getppid());
+
+        printf("\nARRAY IN ASCENDING ORDER: ");
+        bubble_asc(arr, n);
+        print(arr, n);
+    } 
+    else {
+        // PARENT PROCESS → ZOMBIE
+        printf("\n\t********** ZOMBIE STATE **********\n");
+        printf("\tParent PID: %d\n", getpid());
+        printf("\tChild PID: %d\n", pid);
+
+        printf("\nBefore wait() call (child may become zombie temporarily)\n");
+        sleep(2); // short delay to show zombie
+
+        f = wait(0); // clean up child process
+        printf("\nTerminated Child PID: %d\n", f);
+
+        printf("\nARRAY IN DESCENDING ORDER: ");
+        bubble_dsc(arr, n);
+        print(arr, n);
+    }
+
+    return 0;
+}
+
+Output:-
+
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os2af.c
+(base) rmdstic@apple-mac-book:~/Desktop$ gcc os2af.c -o os2af
+(base) rmdstic@apple-mac-book:~/Desktop$ ./a.out
+
+HOW MANY NUMBERS DO YOU WANT IN ARRAY: 5
+ENTER ARRAY ELEMENTS: 12 5 9 21 1
+
+	********** ZOMBIE STATE **********
+	Parent PID: 9141
+	Child PID: 9145
+
+Before wait() call (child may become zombie temporarily)
+
+	********** ORPHAN STATE **********
+	Child PID: 9145
+	Parent PID (before sleep): 9141
+	Parent PID (after sleep): 9141
+
+ARRAY IN ASCENDING ORDER: 1	5	9	12	21	
+
+
+Terminated Child PID: 9145
+
+ARRAY IN DESCENDING ORDER: 21	12	9	5	1
