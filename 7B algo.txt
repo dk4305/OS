@@ -1,0 +1,37 @@
+1.Start
+
+2.Create two named FIFOs using mkfifo() – one for sending data and one for receiving data.
+
+3.Fork the process to create a parent and child process.
+
+4.If Child Process (Receiver):
+
+ Open the first FIFO in read mode.
+
+ Read the input string sent by the parent.
+
+ Count:
+
+	Total characters
+
+	Total words
+
+	Total lines
+
+ Open the second FIFO in write mode.
+
+ Send the counted values (characters, words, lines) to the parent.
+
+5.Else Parent Process (Sender):
+
+ Take a string input from the user.
+
+ Open the first FIFO in write mode and send the string to the child.
+
+ Open the second FIFO in read mode and read the results sent by the child.
+
+ Display the total characters, words, and lines.
+
+6.Delete the FIFOs using unlink().
+
+7.Stop
